@@ -1,6 +1,6 @@
 import './App.css';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Play, Pause, RotateCcw, Square, Circle, Zap, Settings, Triangle } from 'lucide-react';
+import { Play, Pause, RotateCcw, Zap, Settings } from 'lucide-react';
 
 const InstantonGrowthLab = () => {
   const [isRunning, setIsRunning] = useState(false);
@@ -17,20 +17,6 @@ const InstantonGrowthLab = () => {
   
   const width = 400;
   const height = 300;
-
-  // Initialize the field system
-  const initializeField = useCallback(() => {
-    fieldRef.current = {
-      phi: new Float32Array(width * height),
-      phi_prev: new Float32Array(width * height),
-      potential: new Float32Array(width * height),
-      field_gradient: new Float32Array(width * height),
-      instantons: [],
-      time: 0
-    };
-    
-    generateFieldPotential();
-  }, [fieldType]);
 
   // Generate different field potentials
   const generateFieldPotential = useCallback(() => {
@@ -76,10 +62,29 @@ const InstantonGrowthLab = () => {
             const theta = Math.atan2(y, x);
             field.potential[idx] = r * Math.sin(3 * theta);
             break;
+            
+          default:
+            // Default case for unknown field types
+            field.potential[idx] = 0;
+            break;
         }
       }
     }
   }, [fieldType]);
+
+  // Initialize the field system
+  const initializeField = useCallback(() => {
+    fieldRef.current = {
+      phi: new Float32Array(width * height),
+      phi_prev: new Float32Array(width * height),
+      potential: new Float32Array(width * height),
+      field_gradient: new Float32Array(width * height),
+      instantons: [],
+      time: 0
+    };
+    
+    generateFieldPotential();
+  }, [generateFieldPotential]);
 
   // Place a growth seed (instanton) at a location
   const placeInstanton = useCallback((x, y) => {
@@ -122,6 +127,11 @@ const InstantonGrowthLab = () => {
           case 'spiral_seed':
             const angle = Math.atan2(dy, dx);
             profile = amplitude * Math.exp(-dist / radius) * Math.sin(3 * angle + dist * 0.1);
+            break;
+            
+          default:
+            // Default case for unknown shapes
+            profile = amplitude * Math.exp(-dist * dist / (2 * radius * radius));
             break;
         }
         
@@ -322,7 +332,7 @@ const InstantonGrowthLab = () => {
         <div className="text-center mb-6">
           <h1 className="text-4xl font-bold text-white mb-2 flex items-center justify-center gap-3">
             <Zap className="text-yellow-400" />
-            Instanton Growth Laboratory
+            NonLinear Field Pattern Lab
             <Settings className="text-cyan-400" />
           </h1>
           <p className="text-gray-300 text-lg">
