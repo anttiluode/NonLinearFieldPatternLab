@@ -1,3 +1,7 @@
+# It is live at: 
+
+https://anttiluode.github.io/NonLinearFieldPatternLab/
+
 # NonLinearFieldPatternLab
 
 **Interactive exploration of pattern formation in nonlinear wave fields**
